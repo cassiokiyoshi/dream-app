@@ -1,92 +1,133 @@
-Rails app generated with [lewagon/rails-templates](https://github.com/lewagon/rails-templates), created by the [Le Wagon coding bootcamp](https://www.lewagon.com) team.
-
 # Dream App
 
-A Rails app for journaling your dreams and getting an AI-powered interpretation of them — themes, symbols, a short analysis, a generated illustration, and a chat to ask follow-up questions about what it might mean.
+A dream journal built with Ruby on Rails. Record your dreams, explore AI-generated interpretations and illustrations, and ask follow-up questions in a chat connected to each dream.
 
 ## Features
 
-- **Dream journal** — log a dream with the date, your mood, and a free-text description.
-- **AI interpretation** — each dream is sent to an LLM which returns a title, summary, themes, and symbols in a structured format ([app/schemas/dream_interpretation_schema.rb](app/schemas/dream_interpretation_schema.rb)).
-- **AI-generated illustration** — a surreal, Ghibli-styled image representing the dream is generated asynchronously in the background ([app/jobs/image_generation_job.rb](app/jobs/image_generation_job.rb)).
-- **Follow-up chat** — ask the AI more about a dream's meaning; conversation history is kept per dream.
-- **Tagging & filtering** — dreams are auto-tagged by theme and symbol, and the dream list can be filtered by either.
-- **Authentication** — email/password or Google OAuth sign-in (via Devise + Omniauth).
+- Record a dream with its date, mood, and description.
+- Generate a title, summary, themes, and symbols using OpenAI through RubyLLM.
+- Create a surreal illustration in a background job, with a live Turbo update when it is ready.
+- Browse your journal and filter dreams by theme or symbol.
+- Ask follow-up questions with conversation history saved for each dream.
+- Sign up with email and password or sign in with Google.
 
 ## Tech stack
 
-- Ruby 3.3.5 / Rails 8.1
+- Ruby **3.3.5** and Rails **8.1**
 - PostgreSQL
-- [ruby_llm](https://github.com/crmne/ruby_llm) for LLM chat, structured output, and image generation (OpenAI)
-- Solid Queue / Solid Cache / Solid Cable (no Redis required)
-- Devise + Omniauth (Google OAuth2)
-- Active Storage with Cloudinary for image uploads
-- Bootstrap 5, importmaps, Turbo & Stimulus (Hotwire)
-- Kamal for deployment
+- RubyLLM and OpenAI for interpretation, chat, and image generation
+- Devise and OmniAuth Google OAuth2 for authentication
+- Active Storage and Cloudinary for images
+- Bootstrap 5, Sass, Turbo, Stimulus, and import maps
+- Solid Queue, Solid Cache, and Solid Cable for production infrastructure
+- Docker and Kamal deployment configuration
 
-## Getting started
+## Local setup
 
 ### Prerequisites
 
-- Ruby 3.3.5 (see [.ruby-version](.ruby-version))
-- PostgreSQL running locally
-- An OpenAI API key
-- A Google OAuth client (for Google sign-in) — optional for local dev
-- A Cloudinary account (for image storage) — optional for local dev
+Install Ruby 3.3.5, Bundler, and PostgreSQL. Start PostgreSQL and ensure your local database role can create databases. Connection settings are in [config/database.yml](config/database.yml).
 
-### Setup
+You will also need an OpenAI API key for AI features and Cloudinary credentials for image storage. Google OAuth credentials are needed only if you want to use Google sign-in.
+
+### 1. Clone your fork
+
+Replace `YOUR_GITHUB_USERNAME` with the account that owns your fork:
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/YOUR_GITHUB_USERNAME/dream-app.git
 cd dream-app
-bin/setup
 ```
 
-`bin/setup` installs dependencies, prepares the database, and starts the dev server. Pass `--skip-server` to skip the last step, or `--reset` to reset the database.
+### 2. Configure environment variables
 
-### Environment variables
+Create `.env` in the project root before running setup:
 
-Create a `.env` file in the project root (loaded via `dotenv-rails` in development/test):
-
-```
+```dotenv
 OPENAI_API_KEY=your_openai_api_key
+CLOUDINARY_URL=cloudinary://your_api_key:your_api_secret@your_cloud_name
+
+# Optional: enable Google sign-in
 GOOGLE_OAUTH_CLIENT_ID=your_google_client_id
 GOOGLE_OAUTH_CLIENT_SECRET=your_google_client_secret
-CLOUDINARY_URL=your_cloudinary_url
 ```
 
-### Running the app
+The application loads `.env` in development and test through `dotenv-rails`. This file is ignored by Git; keep actual credentials out of commits.
+
+Development and production currently use Cloudinary. To store images on disk during local development instead, change `config.active_storage.service` to `:local` in [config/environments/development.rb](config/environments/development.rb). The local storage service is already defined in [config/storage.yml](config/storage.yml).
+
+### 3. Prepare the application
+
+```bash
+bin/setup --skip-server
+```
+
+This installs missing gems, prepares the database, and clears logs and temporary files. On a fresh database, preparation also runs the seed file. The seed file deletes existing dreams when run, so use it only with disposable data. The `--reset` setup option also resets the database.
+
+### 4. Start the server
 
 ```bash
 bin/dev
 ```
 
-This starts the Rails server along with the asset watchers. Visit `http://localhost:3000`.
+Open <http://localhost:3000>. `bin/dev` starts the Rails server; no separate JavaScript build process is configured.
 
-## Testing
+## Using the app
+
+1. Create an account or sign in.
+2. Add a dream description, date, and mood.
+3. Read the generated interpretation. The illustration is generated asynchronously and appears when ready.
+4. Open the dream's chat to ask follow-up questions.
+5. Return to your journal to browse dreams or filter by theme and symbol.
+
+Interpretation and chat call OpenAI during the request. Illustration generation runs through Active Job; production uses Solid Queue.
+
+## Development checks
+
+Run the Rails tests:
 
 ```bash
 bin/rails test
 ```
 
-## Linting & security
+Run code style and security checks:
 
 ```bash
 bin/rubocop
 bin/brakeman
 bin/bundler-audit
+bin/importmap audit
 ```
 
-Or run everything CI runs:
+Run the full local CI workflow:
 
 ```bash
 bin/ci
 ```
 
+The workflow in [config/ci.rb](config/ci.rb) includes setup, style checks, security checks, Rails tests, and reseeding the test database.
+
+## Project structure
+
+| Path | Purpose |
+| --- | --- |
+| `app/controllers/dreams_controller.rb` | Dream creation, interpretation, and journal filtering |
+| `app/controllers/messages_controller.rb` | Follow-up chat and AI responses |
+| `app/models/` | Users, dreams, and messages |
+| `app/schemas/dream_interpretation_schema.rb` | Structured AI interpretation format |
+| `app/jobs/image_generation_job.rb` | Image generation, attachment, and Turbo updates |
+| `app/views/` | Rails templates and shared UI components |
+| `app/assets/stylesheets/` | Application styles |
+| `config/routes.rb` | Application routes |
+
 ## Deployment
 
-This app is set up for deployment with [Kamal](https://kamal-deploy.org) — see [config/deploy.yml](config/deploy.yml).
+The repository includes a [Dockerfile](Dockerfile) and [Kamal configuration](config/deploy.yml). The Kamal configuration still contains example infrastructure values, including a placeholder server address and local registry. Configure your server, registry, domain, and secrets before deploying.
 
-```bash
-bin/kamal deploy
-```
+Production requires `DATABASE_URL`, `RAILS_MASTER_KEY`, `OPENAI_API_KEY`, and `CLOUDINARY_URL`, plus Google OAuth credentials if enabled. Configure these in the deployment environment; production does not load the development `.env` file. Ensure the database is prepared and Solid Queue is running for image generation. The supplied Kamal configuration enables the queue supervisor inside Puma with `SOLID_QUEUE_IN_PUMA`.
+
+## Credits
+
+This project is a fork of [giftaSantosa/dream-app](https://github.com/giftaSantosa/dream-app).
+
+The Rails application was originally generated with the [Le Wagon Rails templates](https://github.com/lewagon/rails-templates).
