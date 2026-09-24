@@ -65,9 +65,9 @@
   background: linear-gradient(
     to bottom,
     #000000 0%,
-    #543168 45%,
-    #543168 80%,
-    #553f62 100%
+    #343a5c 45%,
+    #343a5c 80%,
+    #343a5c 100%
     );
     overflow: hidden;
 }
@@ -93,7 +93,7 @@
   border: none;
   border-radius: 8px;
   background-color: white;
-  color: #3e006e;
+  color: #343a5c;
   font-weight: 600;
   font-size: 16px;
   cursor: pointer;
@@ -172,7 +172,7 @@
   border: none;
   border-radius: 8px;
   background-color: white;
-  color: #3e006e;
+  color: #343a5c;
   font-weight: 600;
   transition:
     transform 0.2s ease,
@@ -181,7 +181,7 @@
 
 .signin-button:hover {
   background-color: #f2f2f2;
-  color: #3e006e;
+  color: #343a5c;
   transform: translateY(-1px);
 }
 
