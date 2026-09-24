@@ -5,3 +5,17 @@
     transform: scale(1.2);
   }
 }
+
+.bottom-action-button {
+  width: 52px;
+  height: 52px;
+  background: #343a5c;
+  color: white;
+
+  &:hover,
+  &:focus-visible,
+  &:active {
+    background: #343a5c;
+    color: white;
+  }
+}

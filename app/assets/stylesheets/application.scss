@@ -11,6 +11,11 @@
 @import url("https://fonts.googleapis.com/css2?family=Amiko:wght@400;600;700&family=Cormorant:wght@300;400;500;600;700&family=Raleway:wght@300;400;500;600;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Amiko:wght@400;600;700&family=Cormorant:wght@300;400;500;600;700&family=Raleway:wght@300;400;500;600;700&display=swap");
 
+:root {
+  --app-width: 414px;
+  --app-gutter: max(0px, calc((100% - var(--app-width)) / 2));
+}
+
 html {
   margin: 0;
   padding: 0;
@@ -25,7 +30,7 @@ body {
   width: 100%;
   min-height: 100vh;
   min-height: 100dvh;
-  background: #161E2D;
+  background: #0d121c;
   overflow-x: hidden;
 }
 
@@ -37,11 +42,34 @@ body {
   box-sizing: border-box;
 }
 
-@media (min-width: 768px) {
-  .app-container {
-    max-width: 900px;
-    padding: 0 32px;
-  }
+// Keep every page in the same mobile canvas on larger screens.
+.mobile-app {
+  position: relative;
+  width: 100%;
+  max-width: var(--app-width);
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin-inline: auto;
+  background: #161E2D;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.25);
+}
+
+// Fixed controls still follow the viewport vertically, but stay inside the app.
+.home-screen,
+.chat-input-wrapper,
+.navbar-dream.fixed-bottom {
+  left: var(--app-gutter);
+  right: var(--app-gutter);
+  width: auto;
+}
+
+.menu,
+.dream-submit {
+  right: calc(var(--app-gutter) + 24px);
+}
+
+.flash-message {
+  max-width: calc(min(100%, var(--app-width)) - 32px);
 }
 
 h1,

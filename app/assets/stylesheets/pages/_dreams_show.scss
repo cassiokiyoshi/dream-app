@@ -104,27 +104,3 @@
 #spinner {
   color: #94a3b8
 }
-
-@media (min-width: 768px) {
-  .dream-show-wrapper {
-    max-width: 100%;
-    padding: 40px 32px;
-  }
-
-  .dream-card {
-    max-width: 700px;
-    padding: 32px;
-  }
-
-  .dream-card .dream-header .dream-title {
-    font-size: 1.5rem;
-  }
-
-  .dream-card .dream-input {
-    font-size: 1rem;
-  }
-
-  .dream-card .dream-interpretation .dream-summary {
-    font-size: 1rem;
-  }
-}
